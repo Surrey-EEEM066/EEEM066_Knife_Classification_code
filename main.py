@@ -13,10 +13,15 @@ import timm
 from sklearn.model_selection import train_test_split
 import uuid
 
+from src.lr_schedulers import init_lr_scheduler
+from src.optimizers import init_optimizer
+
 from data import knifeDataset
 from utils import *
-from args import argument_parser
-args = argument_parser()
+from args import argument_parser, optimizer_kwargs, lr_scheduler_kwargs
+
+# global variables
+args = argument_parser().parse_args()
 
 warnings.filterwarnings('ignore')
 
@@ -91,12 +96,9 @@ def main():
     model.to(device)
     
     ############################# Parameters #################################
-    optimizer = optim.Adam(model.parameters(), lr=args.learning_rate)
-    scheduler = lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs, eta_min=0)
-    '''
-    scheduler = lr_scheduler.CosineAnnealingLR(optimizer=optimizer, T_max=config.epochs * len(train_loader), eta_min=0,last_epoch=-1)
-    The number of iterations until the learning rate cycles back to its starting value 
-    '''
+    optimizer = init_optimizer(model, **optimizer_kwargs(args))
+    scheduler = init_lr_scheduler(optimizer, **lr_scheduler_kwargs(args))
+    
     criterion = nn.CrossEntropyLoss().cuda()
     scaler = torch.cuda.amp.GradScaler()
 

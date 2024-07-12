@@ -13,3 +13,7 @@ STUDENT_ID=xxxxxxx STUDENT_NAME="xxxxxx" python main.py \
 --resized_img_weight 224 \
 --resized_img_height 224 \
 --seed 0 \
+# --random-erase \
+# --color-aug \
+--optim rmsprop \
+--lr-scheduler CosineAnnealingLR
