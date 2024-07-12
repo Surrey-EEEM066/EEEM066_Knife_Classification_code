@@ -4,20 +4,14 @@ import json
 import torch
 import shutil
 import numpy as np 
-from config import config
 from torch import nn
 import torch.nn.functional as F 
 from sklearn.metrics import f1_score
 from torch.autograd import Variable
 import math
-# save best model
-def save_checkpoint(state, is_best_loss,is_best_f1,fold):
-    filename = config.weights + config.model_name + os.sep +str(fold) + os.sep + "checkpoint.pth.tar"
-    torch.save(state, filename)
-    if is_best_loss:
-        shutil.copyfile(filename,"%s/%s_fold_%s_model_best_loss.pth.tar"%(config.best_models,config.model_name,str(fold)))
-    if is_best_f1:
-        shutil.copyfile(filename,"%s/%s_fold_%s_model_best_f1.pth.tar"%(config.best_models,config.model_name,str(fold)))
+import random
+from args import argument_parser
+args = argument_parser()
 
 # evaluate meters
 class AverageMeter(object):
@@ -37,6 +31,7 @@ class AverageMeter(object):
         self.count += n
         self.avg = self.sum / self.count
 
+
 # print logger
 class Logger(object):
     def __init__(self):
@@ -48,7 +43,8 @@ class Logger(object):
         self.file = open(file, mode)
 
     def write(self, message, is_terminal=1, is_file=1 ):
-        if '\r' in message: is_file=0
+        if '\r' in message: 
+            is_file=0
 
         if is_terminal == 1:
             self.terminal.write(message)
@@ -64,6 +60,7 @@ class Logger(object):
         # this handles the flush command by doing nothing.
         # you might want to specify some extra behavior here.
         pass
+
 
 class FocalLoss(nn.Module):
     def __init__(self, gamma=2):
@@ -82,32 +79,6 @@ class FocalLoss(nn.Module):
             loss = loss.sum(dim=1)
         return loss.mean()
 
-def get_learning_rate(optimizer):
-    lr=[]
-    for param_group in optimizer.param_groups:
-       lr +=[ param_group['lr'] ]
-
-    #assert(len(lr)==1) #we support only one param_group
-    lr = lr[0]
-
-    return lr
-
-def time_to_str(t, mode='min'):
-    if mode=='min':
-        t  = int(t)/60
-        hr = t//60
-        min = t%60
-        return '%2d hr %02d min'%(hr,min)
-
-    elif mode=='sec':
-        t   = int(t)
-        min = t//60
-        sec = t%60
-        return '%2d min %02d sec'%(min,sec)
-
-
-    else:
-        raise NotImplementedError
 
 class ArcFaceLoss(nn.modules.Module):
     def __init__(self,s=30.0,m=0.5):
@@ -140,3 +111,65 @@ class ArcFaceLoss(nn.modules.Module):
         loss=(loss1+gamma*loss2)/(1+gamma)
         return loss
 
+
+def get_learning_rate(optimizer):
+    lr=[]
+    for param_group in optimizer.param_groups:
+       lr +=[ param_group['lr'] ]
+
+    #assert(len(lr)==1) #we support only one param_group
+    lr = lr[0]
+
+    return lr
+
+
+def time_to_str(t, mode='min'):
+    if mode=='min':
+        t  = int(t)/60
+        hr = t//60
+        min = t%60
+        return '%2d hr %02d min'%(hr,min)
+
+    elif mode=='sec':
+        t   = int(t)
+        min = t//60
+        sec = t%60
+        return '%2d min %02d sec'%(min,sec)
+
+
+    else:
+        raise NotImplementedError
+
+
+## Computing the mean average precision, accuracy 
+def map_accuracy(probs, truth, k=5):
+    with torch.no_grad():
+        value, top = probs.topk(k, dim=1, largest=True, sorted=True)
+        correct = top.eq(truth.view(-1, 1).expand_as(top))
+
+        # top accuracy
+        correct = correct.float().sum(0, keepdim=False)
+        correct = correct / len(truth)
+
+        accs = [correct[0], correct[0] + correct[1] + correct[2] + correct[3] + correct[4]]
+        map5 = correct[0] / 1 + correct[1] / 2 + correct[2] / 3 + correct[3] / 4 + correct[4] / 5
+        acc1 = accs[0]
+        acc5 = accs[1]
+        return map5, acc1, acc5
+
+
+
+# Standardized message format
+def format_log_message(mode, i, epoch, loss, mAP, time_str):
+    return f'| {mode:<5} | {i:5.1f} | {epoch:5.1f} | {loss:8.3f} | {mAP:7.3f} | {time_str:<12} |'
+
+
+def set_seed(seed_value):
+    """Set seed for reproducibility."""
+    random.seed(seed_value)  # Python random module
+    np.random.seed(seed_value)  # Numpy module
+    torch.manual_seed(seed_value)  # Sets the seed for generating random numbers for PyTorch
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed_value)
+        torch.cuda.manual_seed_all(seed_value)  # if you are using multi-GPU.
+    print(f"Random seed set to: {seed_value}")
