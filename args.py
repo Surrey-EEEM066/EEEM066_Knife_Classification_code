@@ -28,12 +28,12 @@ def argument_parser():
     # Data augmentation
     # ************************************************************ 
     parser.add_argument('--brightness', type=float, default=0.2, help='Brightness adjustment factor (0 means no change)')
-    parser.add_argument('--contrast', type=float, default=0, help='Contrast adjustment factor (0 means no change)')
-    parser.add_argument('--saturation', type=float, default=0, help='Saturation adjustment factor (0 means no change)')
-    parser.add_argument('--hue', type=float, default=0, help='Hue adjustment factor (0 means no change)')
-    parser.add_argument('--random_rotation', type=int, default=180, help='Max degree of random rotations')
-    parser.add_argument('--vertical_flip', type=float, default=0.5, help='Probability of vertical flip')
-    parser.add_argument('--horizontal_flip', type=float, default=0.5, help='Probability of horizontal flip')
+    parser.add_argument('--contrast', type=float, default=0.2, help='Contrast adjustment factor (0 means no change)')
+    parser.add_argument('--saturation', type=float, default=0.2, help='Saturation adjustment factor (0 means no change)')
+    parser.add_argument('--hue', type=float, default=0.2, help='Hue adjustment factor (0 means no change)')
+    parser.add_argument('--random_rotation', type=int, default=0, help='Max degree of random rotations')
+    parser.add_argument('--vertical_flip', type=float, default=0, help='Probability of vertical flip')
+    parser.add_argument('--horizontal_flip', type=float, default=0, help='Probability of horizontal flip')
     parser.add_argument(
         "--random-erase",
         action="store_true",
