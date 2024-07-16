@@ -13,6 +13,10 @@ STUDENT_ID=xxxxxxx STUDENT_NAME="xxxxxx" python main.py \
 --resized_img_weight 224 \
 --resized_img_height 224 \
 --seed 0 \
+--brightness 0.2 \
+--contrast 0.2 \
+--saturation 0.2 \
+--hue 0.2 \
 # --random-erase \
 # --color-aug \
 --optim rmsprop \
