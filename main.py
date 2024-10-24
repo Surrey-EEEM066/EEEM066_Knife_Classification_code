@@ -92,7 +92,7 @@ def main():
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     
     ## Loading the model to run
-    model = timm.create_model(args.model_mode, pretrained=True, num_classes=args.n_classes)
+    model = timm.create_model(args.model_mode, pretrained=False, num_classes=args.n_classes)
     model.to(device)
     
     ############################# Parameters #################################
