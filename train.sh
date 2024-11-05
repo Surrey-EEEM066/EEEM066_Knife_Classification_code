@@ -9,7 +9,7 @@ STUDENT_ID=xxxxxxx STUDENT_NAME="xxxxxx" python main.py \
 --epochs 20 \
 --batch_size 32 \
 --n_classes 192 \
---learning_rate 0.005 \
+--learning_rate 0.00005 \
 --resized_img_weight 224 \
 --resized_img_height 224 \
 --seed 0 \
