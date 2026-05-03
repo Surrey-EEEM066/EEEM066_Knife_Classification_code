@@ -27,10 +27,33 @@ def argument_parser():
     # ************************************************************
     # Data augmentation
     # ************************************************************ 
-    parser.add_argument('--brightness', type=float, default=0.2, help='Brightness adjustment factor (0 means no change)')
-    parser.add_argument('--contrast', type=float, default=0.2, help='Contrast adjustment factor (0 means no change)')
-    parser.add_argument('--saturation', type=float, default=0.2, help='Saturation adjustment factor (0 means no change)')
-    parser.add_argument('--hue', type=float, default=0.2, help='Hue adjustment factor (0 means no change)')
+    parser.add_argument(
+        "--brightness",
+        type=float,
+        default=None,
+        help="Brightness adjustment factor"
+    )
+
+    parser.add_argument(
+        "--contrast",
+        type=float,
+        default=None,
+        help="Contrast adjustment factor"
+    )
+
+    parser.add_argument(
+        "--saturation",
+        type=float,
+        default=None,
+        help="Saturation adjustment factor"
+    )
+
+    parser.add_argument(
+        "--hue",
+        type=float,
+        default=None,
+        help="Hue adjustment factor"
+    )
     parser.add_argument('--random_rotation', type=int, default=0, help='Max degree of random rotations')
     parser.add_argument('--vertical_flip', type=float, default=0, help='Probability of vertical flip')
     parser.add_argument('--horizontal_flip', type=float, default=0, help='Probability of horizontal flip')
@@ -52,12 +75,16 @@ def argument_parser():
     parser.add_argument(
         "--optim",
         type=str,
-        default="adam",
-        help="optimization algorithm (see optimizers.py)",
+        default=None,
+        help="optimization algorithm"
     )
+
     parser.add_argument(
-        "--learning_rate", default=0.0003, type=float, help="initial learning rate"
-    )    
+        "--learning_rate",
+        type=float,
+        default=None,
+        help="initial learning rate"
+    ) 
     parser.add_argument(
         "--weight-decay", default=5e-04, type=float, help="weight decay"
     )
@@ -100,8 +127,8 @@ def argument_parser():
     parser.add_argument(
         "--lr-scheduler",
         type=str,
-        default="multi_step",
-        help="learning rate scheduler (see lr_schedulers.py)",
+        default=None,
+        help="learning rate scheduler"
     )
     parser.add_argument(
         "--stepsize",
